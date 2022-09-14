@@ -12,7 +12,7 @@ using TrainerCalendar.Contexts;
 namespace TrainerCalendar.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220914105537_DatabaseDesignReady")]
+    [Migration("20220914132206_DatabaseDesignReady")]
     partial class DatabaseDesignReady
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
