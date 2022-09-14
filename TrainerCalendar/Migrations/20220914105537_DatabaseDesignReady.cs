@@ -50,19 +50,6 @@ namespace TrainerCalendar.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Courses",
-                columns: table => new
-                {
-                    CourseId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CourseName = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Courses", x => x.CourseId);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Skills",
                 columns: table => new
                 {
@@ -81,7 +68,9 @@ namespace TrainerCalendar.Migrations
                 {
                     TrainerId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    TrainerName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    TrainerName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TrainerEmail = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -195,66 +184,22 @@ namespace TrainerCalendar.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CourseSkill",
+                name: "Courses",
                 columns: table => new
                 {
-                    CoursesCourseId = table.Column<int>(type: "int", nullable: false),
-                    SkillsSkillId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CourseSkill", x => new { x.CoursesCourseId, x.SkillsSkillId });
-                    table.ForeignKey(
-                        name: "FK_CourseSkill_Courses_CoursesCourseId",
-                        column: x => x.CoursesCourseId,
-                        principalTable: "Courses",
-                        principalColumn: "CourseId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CourseSkill_Skills_SkillsSkillId",
-                        column: x => x.SkillsSkillId,
-                        principalTable: "Skills",
-                        principalColumn: "SkillId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Sessions",
-                columns: table => new
-                {
-                    SessionId = table.Column<int>(type: "int", nullable: false)
+                    CourseId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    SessionName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TrainingMode = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TrainingLocation = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CouresId = table.Column<int>(type: "int", nullable: false),
-                    CourseId = table.Column<int>(type: "int", nullable: false),
-                    TrainerId = table.Column<int>(type: "int", nullable: false),
+                    CourseName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SkillId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Sessions", x => x.SessionId);
+                    table.PrimaryKey("PK_Courses", x => x.CourseId);
                     table.ForeignKey(
-                        name: "Fk_Session_To_SkillId",
+                        name: "Fk_session_To_Course_CourseId",
                         column: x => x.SkillId,
                         principalTable: "Skills",
                         principalColumn: "SkillId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Sessions_Courses_CourseId",
-                        column: x => x.CourseId,
-                        principalTable: "Courses",
-                        principalColumn: "CourseId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Sessions_Trainers_TrainerId",
-                        column: x => x.TrainerId,
-                        principalTable: "Trainers",
-                        principalColumn: "TrainerId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -280,6 +225,43 @@ namespace TrainerCalendar.Migrations
                         principalTable: "Trainers",
                         principalColumn: "TrainerId",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Sessions",
+                columns: table => new
+                {
+                    SessionId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SessionName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TrainingMode = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TrainingLocation = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CouresId = table.Column<int>(type: "int", nullable: true),
+                    CourseId = table.Column<int>(type: "int", nullable: true),
+                    TrainerId = table.Column<int>(type: "int", nullable: true),
+                    SkillId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sessions", x => x.SessionId);
+                    table.ForeignKey(
+                        name: "Fk_Session_To_Skill_SkillId",
+                        column: x => x.SkillId,
+                        principalTable: "Skills",
+                        principalColumn: "SkillId");
+                    table.ForeignKey(
+                        name: "FK_Sessions_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
+                        principalColumn: "CourseId");
+                    table.ForeignKey(
+                        name: "FK_Sessions_Trainers_TrainerId",
+                        column: x => x.TrainerId,
+                        principalTable: "Trainers",
+                        principalColumn: "TrainerId");
                 });
 
             migrationBuilder.CreateIndex(
@@ -322,9 +304,9 @@ namespace TrainerCalendar.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CourseSkill_SkillsSkillId",
-                table: "CourseSkill",
-                column: "SkillsSkillId");
+                name: "IX_Courses_SkillId",
+                table: "Courses",
+                column: "SkillId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Sessions_CourseId",
@@ -365,9 +347,6 @@ namespace TrainerCalendar.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "CourseSkill");
-
-            migrationBuilder.DropTable(
                 name: "Sessions");
 
             migrationBuilder.DropTable(
@@ -383,10 +362,10 @@ namespace TrainerCalendar.Migrations
                 name: "Courses");
 
             migrationBuilder.DropTable(
-                name: "Skills");
+                name: "Trainers");
 
             migrationBuilder.DropTable(
-                name: "Trainers");
+                name: "Skills");
         }
     }
 }

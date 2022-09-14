@@ -20,17 +20,19 @@ namespace TrainerCalendar.Contexts
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            //many to many relationship between courses and skills
+            //multiple courses for single skill (skill to course one to many)
             builder.Entity<Course>()
-                .HasMany<Skill>(s => s.Skills)
-                .WithMany(c => c.Courses);
+                .HasOne<Skill>(s => s.Skill)
+                .WithMany(c => c.Courses)
+                .HasForeignKey(s => s.SkillId)
+                .HasConstraintName("Fk_session_To_Course_CourseId");
 
             //multiple session can be scheduled for single skill (skill to session one to many)
             builder.Entity<Session>()
                 .HasOne<Skill>(s => s.Skill)
                 .WithMany(s => s.Sessions)
                 .HasForeignKey(s => s.SkillId)
-                .HasConstraintName("Fk_Session_To_SkillId");
+                .HasConstraintName("Fk_Session_To_Skill_SkillId");
 
             builder.Entity<Trainer>()
                 .HasMany<Skill>(s => s.Skills)

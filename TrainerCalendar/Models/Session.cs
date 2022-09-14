@@ -11,13 +11,13 @@
         public DateTime EndTime { get; set; }
 
         //Navigations
-        public int CouresId { get; set; }
-        public Course Course { get; set; }
+        public int? CouresId { get; set; }
+        public Course? Course { get; set; }
 
-        public int TrainerId { get; set; }
-        public Trainer Trainer { get; set; }
+        public int? TrainerId { get; set; }
+        public Trainer? Trainer { get; set; }
 
-        public int SkillId { get; set; }
-        public Skill Skill { get; set; }
+        public int? SkillId { get; set; }
+        public Skill? Skill { get; set; }
     }
 }

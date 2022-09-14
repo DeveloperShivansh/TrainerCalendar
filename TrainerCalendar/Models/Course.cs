@@ -6,7 +6,8 @@
         public string CourseName { get; set; }
 
         //Navigation Properties
-        public List<Skill> Skills { get; set; } = new List<Skill>();
+        public int SkillId { get; set; }
+        public  Skill Skill { get; set; }
         public List<Session> Sessions { get; set; } = new List<Session>();
     }
 }

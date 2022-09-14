@@ -22,21 +22,6 @@ namespace TrainerCalendar.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("CourseSkill", b =>
-                {
-                    b.Property<int>("CoursesCourseId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SkillsSkillId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CoursesCourseId", "SkillsSkillId");
-
-                    b.HasIndex("SkillsSkillId");
-
-                    b.ToTable("CourseSkill");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -268,7 +253,12 @@ namespace TrainerCalendar.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("SkillId")
+                        .HasColumnType("int");
+
                     b.HasKey("CourseId");
+
+                    b.HasIndex("SkillId");
 
                     b.ToTable("Courses");
                 });
@@ -281,10 +271,10 @@ namespace TrainerCalendar.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SessionId"), 1L, 1);
 
-                    b.Property<int>("CouresId")
+                    b.Property<int?>("CouresId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CourseId")
+                    b.Property<int?>("CourseId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Date")
@@ -297,13 +287,13 @@ namespace TrainerCalendar.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("SkillId")
+                    b.Property<int?>("SkillId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("TrainerId")
+                    b.Property<int?>("TrainerId")
                         .HasColumnType("int");
 
                     b.Property<string>("TrainingLocation")
@@ -350,6 +340,14 @@ namespace TrainerCalendar.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TrainerId"), 1L, 1);
 
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TrainerEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("TrainerName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -364,21 +362,6 @@ namespace TrainerCalendar.Migrations
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
 
                     b.HasDiscriminator().HasValue("User");
-                });
-
-            modelBuilder.Entity("CourseSkill", b =>
-                {
-                    b.HasOne("TrainerCalendar.Models.Course", null)
-                        .WithMany()
-                        .HasForeignKey("CoursesCourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TrainerCalendar.Models.Skill", null)
-                        .WithMany()
-                        .HasForeignKey("SkillsSkillId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -447,26 +430,32 @@ namespace TrainerCalendar.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("TrainerCalendar.Models.Course", b =>
+                {
+                    b.HasOne("TrainerCalendar.Models.Skill", "Skill")
+                        .WithMany("Courses")
+                        .HasForeignKey("SkillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("Fk_session_To_Course_CourseId");
+
+                    b.Navigation("Skill");
+                });
+
             modelBuilder.Entity("TrainerCalendar.Models.Session", b =>
                 {
                     b.HasOne("TrainerCalendar.Models.Course", "Course")
                         .WithMany("Sessions")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CourseId");
 
                     b.HasOne("TrainerCalendar.Models.Skill", "Skill")
                         .WithMany("Sessions")
                         .HasForeignKey("SkillId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("Fk_Session_To_SkillId");
+                        .HasConstraintName("Fk_Session_To_Skill_SkillId");
 
                     b.HasOne("TrainerCalendar.Models.Trainer", "Trainer")
                         .WithMany()
-                        .HasForeignKey("TrainerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("TrainerId");
 
                     b.Navigation("Course");
 
@@ -482,6 +471,8 @@ namespace TrainerCalendar.Migrations
 
             modelBuilder.Entity("TrainerCalendar.Models.Skill", b =>
                 {
+                    b.Navigation("Courses");
+
                     b.Navigation("Sessions");
                 });
 #pragma warning restore 612, 618
