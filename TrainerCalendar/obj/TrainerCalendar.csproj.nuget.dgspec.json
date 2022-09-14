@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\shivansh_shrivastava\\source\\repos\\TrainerCalendar\\TrainerCalendar\\TrainerCalendar.csproj": {}
+    "D:\\MyProject\\new_one\\TrainerCalendar\\TrainerCalendar\\TrainerCalendar.csproj": {}
   },
   "projects": {
-    "C:\\Users\\shivansh_shrivastava\\source\\repos\\TrainerCalendar\\TrainerCalendar\\TrainerCalendar.csproj": {
+    "D:\\MyProject\\new_one\\TrainerCalendar\\TrainerCalendar\\TrainerCalendar.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\shivansh_shrivastava\\source\\repos\\TrainerCalendar\\TrainerCalendar\\TrainerCalendar.csproj",
+        "projectUniqueName": "D:\\MyProject\\new_one\\TrainerCalendar\\TrainerCalendar\\TrainerCalendar.csproj",
         "projectName": "TrainerCalendar",
-        "projectPath": "C:\\Users\\shivansh_shrivastava\\source\\repos\\TrainerCalendar\\TrainerCalendar\\TrainerCalendar.csproj",
-        "packagesPath": "C:\\Users\\shivansh_shrivastava\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\shivansh_shrivastava\\source\\repos\\TrainerCalendar\\TrainerCalendar\\obj\\",
+        "projectPath": "D:\\MyProject\\new_one\\TrainerCalendar\\TrainerCalendar\\TrainerCalendar.csproj",
+        "packagesPath": "C:\\Users\\nihal_bagwan\\.nuget\\packages\\",
+        "outputPath": "D:\\MyProject\\new_one\\TrainerCalendar\\TrainerCalendar\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\shivansh_shrivastava\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\nihal_bagwan\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -60,21 +60,25 @@
             },
             "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",
-              "version": "[6.0.9, )"
+              "version": "[6.0.8, )"
             },
             "Microsoft.EntityFrameworkCore.Tools": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
-              "version": "[6.0.9, )"
+              "version": "[6.0.8, )"
             },
             "Microsoft.IdentityModel.Tokens": {
               "target": "Package",
               "version": "[6.23.1, )"
             },
+            "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
+              "target": "Package",
+              "version": "[6.0.8, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
-              "version": "[6.4.0, )"
+              "version": "[6.3.0, )"
             },
             "System.IdentityModel.Tokens.Jwt": {
               "target": "Package",
