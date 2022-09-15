@@ -535,3 +535,4 @@ C:\Users\shivansh_shrivastava\source\repos\TrainerCalendar\TrainerCalendar\bin\D
 C:\Users\shivansh_shrivastava\source\repos\TrainerCalendar\TrainerCalendar\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Windows.Extensions.dll
 =======
 >>>>>>> bbae743e473eede6b02d4dc6ed5282d91003d28c
+C:\Users\shivansh_shrivastava\source\repos\TrainerCalendar\TrainerCalendar\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "7inG7vouBBmjrjKJW/2DDCvGOQH2ncQP+RD4Sv6XE7Upm2kUFRe24qGuB5SPJ/DH1lOPzqgEtf3FRNQFSkiuVg==",
+  "dgSpecHash": "bp+o6lg8OhJNl58n/yRxqBv5D8D0ay2XH8th0OzAmIovEh3xKc0t7OoiX7I1D2Ae121jEHg50ewQX5ATy5O50w==",
   "success": true,
   "projectFilePath": "C:\\Users\\shivansh_shrivastava\\source\\repos\\TrainerCalendar\\TrainerCalendar\\TrainerCalendar.csproj",
   "expectedPackageFiles": [
@@ -8,6 +8,7 @@
     "C:\\Users\\shivansh_shrivastava\\.nuget\\packages\\messagepack\\2.1.152\\messagepack.2.1.152.nupkg.sha512",
     "C:\\Users\\shivansh_shrivastava\\.nuget\\packages\\messagepack.annotations\\2.1.152\\messagepack.annotations.2.1.152.nupkg.sha512",
     "C:\\Users\\shivansh_shrivastava\\.nuget\\packages\\messagepackanalyzer\\2.1.152\\messagepackanalyzer.2.1.152.nupkg.sha512",
+    "C:\\Users\\shivansh_shrivastava\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\6.0.9\\microsoft.aspnetcore.authentication.jwtbearer.6.0.9.nupkg.sha512",
     "C:\\Users\\shivansh_shrivastava\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\6.0.9\\microsoft.aspnetcore.cryptography.internal.6.0.9.nupkg.sha512",
     "C:\\Users\\shivansh_shrivastava\\.nuget\\packages\\microsoft.aspnetcore.cryptography.keyderivation\\6.0.9\\microsoft.aspnetcore.cryptography.keyderivation.6.0.9.nupkg.sha512",
     "C:\\Users\\shivansh_shrivastava\\.nuget\\packages\\microsoft.aspnetcore.identity.entityframeworkcore\\6.0.9\\microsoft.aspnetcore.identity.entityframeworkcore.6.0.9.nupkg.sha512",
@@ -59,8 +60,8 @@
     "C:\\Users\\shivansh_shrivastava\\.nuget\\packages\\microsoft.identitymodel.abstractions\\6.23.1\\microsoft.identitymodel.abstractions.6.23.1.nupkg.sha512",
     "C:\\Users\\shivansh_shrivastava\\.nuget\\packages\\microsoft.identitymodel.jsonwebtokens\\6.23.1\\microsoft.identitymodel.jsonwebtokens.6.23.1.nupkg.sha512",
     "C:\\Users\\shivansh_shrivastava\\.nuget\\packages\\microsoft.identitymodel.logging\\6.23.1\\microsoft.identitymodel.logging.6.23.1.nupkg.sha512",
-    "C:\\Users\\shivansh_shrivastava\\.nuget\\packages\\microsoft.identitymodel.protocols\\6.8.0\\microsoft.identitymodel.protocols.6.8.0.nupkg.sha512",
-    "C:\\Users\\shivansh_shrivastava\\.nuget\\packages\\microsoft.identitymodel.protocols.openidconnect\\6.8.0\\microsoft.identitymodel.protocols.openidconnect.6.8.0.nupkg.sha512",
+    "C:\\Users\\shivansh_shrivastava\\.nuget\\packages\\microsoft.identitymodel.protocols\\6.10.0\\microsoft.identitymodel.protocols.6.10.0.nupkg.sha512",
+    "C:\\Users\\shivansh_shrivastava\\.nuget\\packages\\microsoft.identitymodel.protocols.openidconnect\\6.10.0\\microsoft.identitymodel.protocols.openidconnect.6.10.0.nupkg.sha512",
     "C:\\Users\\shivansh_shrivastava\\.nuget\\packages\\microsoft.identitymodel.tokens\\6.23.1\\microsoft.identitymodel.tokens.6.23.1.nupkg.sha512",
     "C:\\Users\\shivansh_shrivastava\\.nuget\\packages\\microsoft.net.stringtools\\1.0.0\\microsoft.net.stringtools.1.0.0.nupkg.sha512",
     "C:\\Users\\shivansh_shrivastava\\.nuget\\packages\\microsoft.netcore.platforms\\3.1.0\\microsoft.netcore.platforms.3.1.0.nupkg.sha512",

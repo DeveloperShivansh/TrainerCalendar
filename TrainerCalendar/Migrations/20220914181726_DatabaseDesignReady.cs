@@ -29,6 +29,8 @@ namespace TrainerCalendar.Migrations
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Discriminator = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Role = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Roles = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -60,21 +62,6 @@ namespace TrainerCalendar.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Skills", x => x.SkillId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Trainers",
-                columns: table => new
-                {
-                    TrainerId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    TrainerName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TrainerEmail = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Trainers", x => x.TrainerId);
                 });
 
             migrationBuilder.CreateTable(
@@ -184,6 +171,28 @@ namespace TrainerCalendar.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Trainers",
+                columns: table => new
+                {
+                    TrainerId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TrainerName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TrainerEmail = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true),
+                    UserId1 = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Trainers", x => x.TrainerId);
+                    table.ForeignKey(
+                        name: "FK_Trainers_AspNetUsers_UserId1",
+                        column: x => x.UserId1,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Courses",
                 columns: table => new
                 {
@@ -196,7 +205,7 @@ namespace TrainerCalendar.Migrations
                 {
                     table.PrimaryKey("PK_Courses", x => x.CourseId);
                     table.ForeignKey(
-                        name: "Fk_session_To_Course_CourseId",
+                        name: "Fk_session_To_Course_Course_Id",
                         column: x => x.SkillId,
                         principalTable: "Skills",
                         principalColumn: "SkillId",
@@ -248,7 +257,7 @@ namespace TrainerCalendar.Migrations
                 {
                     table.PrimaryKey("PK_Sessions", x => x.SessionId);
                     table.ForeignKey(
-                        name: "Fk_Session_To_Skill_SkillId",
+                        name: "Fk_Session_To_Skill_Skill_Id",
                         column: x => x.SkillId,
                         principalTable: "Skills",
                         principalColumn: "SkillId");
@@ -327,6 +336,11 @@ namespace TrainerCalendar.Migrations
                 name: "IX_SkillTrainer_TrainersTrainerId",
                 table: "SkillTrainer",
                 column: "TrainersTrainerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Trainers_UserId1",
+                table: "Trainers",
+                column: "UserId1");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -356,9 +370,6 @@ namespace TrainerCalendar.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
                 name: "Courses");
 
             migrationBuilder.DropTable(
@@ -366,6 +377,9 @@ namespace TrainerCalendar.Migrations
 
             migrationBuilder.DropTable(
                 name: "Skills");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
         }
     }
 }
