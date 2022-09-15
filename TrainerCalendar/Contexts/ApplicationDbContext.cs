@@ -22,17 +22,17 @@ namespace TrainerCalendar.Contexts
         {
             //multiple courses for single skill (skill to course one to many)
             builder.Entity<Course>()
-                .HasOne<Skill>(s => s.Skill)
+                .HasOne<Skill>(c => c.Skill)
                 .WithMany(c => c.Courses)
                 .HasForeignKey(s => s.SkillId)
-                .HasConstraintName("Fk_session_To_Course_CourseId");
+                .HasConstraintName("Fk_session_To_Course_Course_Id");
 
             //multiple session can be scheduled for single skill (skill to session one to many)
             builder.Entity<Session>()
-                .HasOne<Skill>(s => s.Skill)
-                .WithMany(s => s.Sessions)
-                .HasForeignKey(s => s.SkillId)
-                .HasConstraintName("Fk_Session_To_Skill_SkillId");
+                .HasOne<Skill>(session => session.Skill)
+                .WithMany(skill => skill.Sessions)
+                .HasForeignKey(session => session.SkillId)
+                .HasConstraintName("Fk_Session_To_Skill_Skill_Id");
 
             builder.Entity<Trainer>()
                 .HasMany<Skill>(s => s.Skills)

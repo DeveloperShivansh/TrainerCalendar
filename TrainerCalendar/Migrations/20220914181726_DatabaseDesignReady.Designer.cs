@@ -12,7 +12,7 @@ using TrainerCalendar.Contexts;
 namespace TrainerCalendar.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220914132206_DatabaseDesignReady")]
+    [Migration("20220914181726_DatabaseDesignReady")]
     partial class DatabaseDesignReady
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -354,7 +354,15 @@ namespace TrainerCalendar.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId1")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("TrainerId");
+
+                    b.HasIndex("UserId1");
 
                     b.ToTable("Trainers");
                 });
@@ -362,6 +370,14 @@ namespace TrainerCalendar.Migrations
             modelBuilder.Entity("TrainerCalendar.Models.User", b =>
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Roles")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("User");
                 });
@@ -439,7 +455,7 @@ namespace TrainerCalendar.Migrations
                         .HasForeignKey("SkillId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("Fk_session_To_Course_CourseId");
+                        .HasConstraintName("Fk_session_To_Course_Course_Id");
 
                     b.Navigation("Skill");
                 });
@@ -453,7 +469,7 @@ namespace TrainerCalendar.Migrations
                     b.HasOne("TrainerCalendar.Models.Skill", "Skill")
                         .WithMany("Sessions")
                         .HasForeignKey("SkillId")
-                        .HasConstraintName("Fk_Session_To_Skill_SkillId");
+                        .HasConstraintName("Fk_Session_To_Skill_Skill_Id");
 
                     b.HasOne("TrainerCalendar.Models.Trainer", "Trainer")
                         .WithMany()
@@ -464,6 +480,15 @@ namespace TrainerCalendar.Migrations
                     b.Navigation("Skill");
 
                     b.Navigation("Trainer");
+                });
+
+            modelBuilder.Entity("TrainerCalendar.Models.Trainer", b =>
+                {
+                    b.HasOne("TrainerCalendar.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId1");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TrainerCalendar.Models.Course", b =>
