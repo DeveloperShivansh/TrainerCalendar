@@ -9907,19 +9907,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\shivansh_shrivastava\\.nuget\\packages\\": {}
+    "C:\\Users\\nihal_bagwan\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\shivansh_shrivastava\\source\\repos\\TrainerCalendar\\TrainerCalendar\\TrainerCalendar.csproj",
+      "projectUniqueName": "D:\\Project\\TrainerCalendar\\TrainerCalendar\\TrainerCalendar.csproj",
       "projectName": "TrainerCalendar",
-      "projectPath": "C:\\Users\\shivansh_shrivastava\\source\\repos\\TrainerCalendar\\TrainerCalendar\\TrainerCalendar.csproj",
-      "packagesPath": "C:\\Users\\shivansh_shrivastava\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\shivansh_shrivastava\\source\\repos\\TrainerCalendar\\TrainerCalendar\\obj\\",
+      "projectPath": "D:\\Project\\TrainerCalendar\\TrainerCalendar\\TrainerCalendar.csproj",
+      "packagesPath": "C:\\Users\\nihal_bagwan\\.nuget\\packages\\",
+      "outputPath": "D:\\Project\\TrainerCalendar\\TrainerCalendar\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\shivansh_shrivastava\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\nihal_bagwan\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
