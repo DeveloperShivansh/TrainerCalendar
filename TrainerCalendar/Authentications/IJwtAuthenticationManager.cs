@@ -6,6 +6,7 @@ namespace TrainerCalendar.Authentications
     public interface IJwtAuthenticationManager
     {
         public Task<object> Generate(User user);
-        public User Authenticate(UserDto userDto);
+        public User? Authenticate(UserDto userDto);
+        public User? Authenticate(TrainerDto trainerDto);
     }
 }
