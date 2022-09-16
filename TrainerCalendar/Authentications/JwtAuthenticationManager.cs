@@ -56,6 +56,7 @@ namespace TrainerCalendar.Authentications
         {
             var Key = Encoding.UTF8.GetBytes(configuration["Jwt:Key"]);
             var securityKey = new SymmetricSecurityKey(Key);
+
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new List<Claim>
@@ -72,7 +73,7 @@ namespace TrainerCalendar.Authentications
                 expires: DateTime.Now.AddMinutes(15),
                 signingCredentials: credentials
             );
-
+            Console.WriteLine(token.ValidTo.ToString());
             return new
             {
                 token = new JwtSecurityTokenHandler().WriteToken(token),

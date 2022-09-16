@@ -141,7 +141,8 @@ namespace TrainerCalendar.Controllers
                     responseDto.Status = false;
                     responseDto.Message = "Trainer Does Not Exists";
                     return responseDto;
-                } else
+                } 
+                else
                 {
                     User user = new User();
                     user.Email = t.TrainerEmail;
