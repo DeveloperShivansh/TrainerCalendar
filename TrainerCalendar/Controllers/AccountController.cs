@@ -29,7 +29,7 @@ namespace TrainerCalendar.Controllers
         [HttpPost]
         public object GetToken(UserDto userDto)
         {
-            User user = jwtAuthenticationManager.Authenticate(userDto);
+            User? user = jwtAuthenticationManager.Authenticate(userDto);
             if (user != null)
             {
                 var result = jwtAuthenticationManager.Generate(user).GetAwaiter().GetResult();
@@ -80,12 +80,18 @@ namespace TrainerCalendar.Controllers
         [Authorize(AuthenticationSchemes = "Bearer")]
         [Route("CreateTrainer/")]
         [HttpPost]
-        public object CreateTrainer(TrainerDto trainerDto)
+        public object CreateTrainer(TrainerDto? trainerDto)
         {
+            if (trainerDto == null) return new
+            {
+                Status = false,
+                Message = "No data found in request"
+            };
+
             User? u = jwtAuthenticationManager.Authenticate(trainerDto);
             
             ResponseDto responseDto = new ResponseDto();
-            if (CurrentRequest.CurrentUser.Role == "Admin")
+            if (CurrentRequest.CurrentUser != null && CurrentRequest.CurrentUser.Role == "Admin")
             {
                 if (u != null)
                 {
@@ -95,26 +101,27 @@ namespace TrainerCalendar.Controllers
                 }
                 else
                 {
-                    if (trainerDto.ValidateCreation())
+                    var result = trainerDto.ValidateCreation();
+                    if (result.Status == true)
                     {
-                        Trainer t = new Trainer();
+                        Trainer? t = new Trainer();
                         t.TrainerEmail = trainerDto.TrainerEmail;
                         t.TrainerName = trainerDto.TrainerName;
                         t.PhoneNumber = trainerDto.PhoneNumber;
+                        foreach(int skillId in trainerDto.Skills)
+                        {
+                            Skill? s = dbContext.Skills.FirstOrDefault(x => x.SkillId == skillId);
+                            if (s != null) t.Skills.Add(s);
+                        }
                         dbContext.Trainers.Add(t);
                         dbContext.SaveChanges();
 
-                        responseDto.Status=true;
+                        responseDto.Status = true;
                         responseDto.Message = "Trainer Created Successfully";
                         responseDto.Data = t;
                         return responseDto;
-                    } else
-                    {
-                        responseDto.Status = false;
-                        responseDto.Message = "All Fields are Required";
-                        return responseDto;
                     }
-
+                    else return result;
                 }
             } 
             else
@@ -152,7 +159,7 @@ namespace TrainerCalendar.Controllers
 
                     //Here Send OTP On trainer Phone
 
-                    var result = userManager.CreateAsync(user, trainerDto.Password).GetAwaiter().GetResult();
+                    var result = await userManager.CreateAsync(user, trainerDto.Password);
                     if(result.Succeeded)
                     {
                         responseDto.Status=true;

@@ -266,3 +266,6 @@ C:\Users\shivansh_shrivastava\source\repos\TrainerCalendar\TrainerCalendar\obj\D
 C:\Users\shivansh_shrivastava\source\repos\TrainerCalendar\TrainerCalendar\obj\Debug\net6.0\TrainerCalendar.pdb
 C:\Users\shivansh_shrivastava\source\repos\TrainerCalendar\TrainerCalendar\obj\Debug\net6.0\TrainerCalendar.genruntimeconfig.cache
 C:\Users\shivansh_shrivastava\source\repos\TrainerCalendar\TrainerCalendar\obj\Debug\net6.0\ref\TrainerCalendar.dll
+C:\Users\shivansh_shrivastava\source\repos\TrainerCalendar\TrainerCalendar\bin\Debug\net6.0\Microsoft.AspNetCore.JsonPatch.dll
+C:\Users\shivansh_shrivastava\source\repos\TrainerCalendar\TrainerCalendar\bin\Debug\net6.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
+C:\Users\shivansh_shrivastava\source\repos\TrainerCalendar\TrainerCalendar\bin\Debug\net6.0\Newtonsoft.Json.Bson.dll

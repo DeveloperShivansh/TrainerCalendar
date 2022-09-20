@@ -56,7 +56,7 @@ namespace TrainerCalendar.Migrations
                 columns: table => new
                 {
                     SkillId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("SqlServer:Identity", "101, 1"),
                     SkillName = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -197,7 +197,7 @@ namespace TrainerCalendar.Migrations
                 columns: table => new
                 {
                     CourseId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("SqlServer:Identity", "1001, 1"),
                     CourseName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SkillId = table.Column<int>(type: "int", nullable: false)
                 },
