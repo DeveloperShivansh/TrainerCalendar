@@ -73,7 +73,7 @@ namespace TrainerCalendar.Authentications
                 expires: DateTime.Now.AddMinutes(15),
                 signingCredentials: credentials
             );
-            Console.WriteLine(token.ValidTo.ToString());
+
             return new
             {
                 token = new JwtSecurityTokenHandler().WriteToken(token),
