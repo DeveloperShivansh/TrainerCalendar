@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TrainerCalendar.Authentications;
 using TrainerCalendar.Contexts;
+using TrainerCalendar.Db;
 using TrainerCalendar.Middlewares;
 using TrainerCalendar.Models;
 using TrainerCalendar.Models.Dto;
@@ -18,11 +19,13 @@ namespace TrainerCalendar.Controllers
         private UserManager<User> userManager;
         private ApplicationDbContext dbContext;
         private IJwtAuthenticationManager jwtAuthenticationManager;
-        public AccountController(UserManager<User> userManager, ApplicationDbContext dbContext, IJwtAuthenticationManager jwtAuthenticationManager)
+        private ITrainerDb trainerDb;
+        public AccountController(UserManager<User> userManager, ApplicationDbContext dbContext, IJwtAuthenticationManager jwtAuthenticationManager, ITrainerDb trainerDb)
         {
             this.jwtAuthenticationManager = jwtAuthenticationManager;
             this.userManager = userManager;
             this.dbContext = dbContext;
+            this.trainerDb = trainerDb;
         }
         // Post: api/account/gettoken/
         [Route("gettoken/")]
@@ -82,54 +85,7 @@ namespace TrainerCalendar.Controllers
         [HttpPost]
         public object CreateTrainer(TrainerDto? trainerDto)
         {
-            if (trainerDto == null) return new
-            {
-                Status = false,
-                Message = "No data found in request"
-            };
-
-            User? u = jwtAuthenticationManager.Authenticate(trainerDto);
-            
-            ResponseDto responseDto = new ResponseDto();
-            if (CurrentRequest.CurrentUser != null && CurrentRequest.CurrentUser.Role == "Admin")
-            {
-                if (u != null)
-                {
-                    responseDto.Status = false;
-                    responseDto.Message = "Trainer with the given details already exists";
-                    return responseDto;
-                }
-                else
-                {
-                    var result = trainerDto.ValidateCreation();
-                    if (result.Status == true)
-                    {
-                        Trainer? t = new Trainer();
-                        t.TrainerEmail = trainerDto.TrainerEmail;
-                        t.TrainerName = trainerDto.TrainerName;
-                        t.PhoneNumber = trainerDto.PhoneNumber;
-                        foreach(int skillId in trainerDto.Skills)
-                        {
-                            Skill? s = dbContext.Skills.FirstOrDefault(x => x.SkillId == skillId);
-                            if (s != null) t.Skills.Add(s);
-                        }
-                        dbContext.Trainers.Add(t);
-                        dbContext.SaveChanges();
-
-                        responseDto.Status = true;
-                        responseDto.Message = "Trainer Created Successfully";
-                        responseDto.Data = t;
-                        return responseDto;
-                    }
-                    else return result;
-                }
-            } 
-            else
-            {
-                responseDto.Status = false;
-                responseDto.Message = "Only Admins Can Post Trainers";
-                return responseDto;
-            }
+            return trainerDb.PostTrainer(trainerDto);
         }
 
         [Route("SetTrainerPassword/")]

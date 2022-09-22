@@ -19,7 +19,7 @@ namespace TrainerCalendar.Models.Dto
                 if (t != null)
                 {
                     response.Status = false;
-                    response.Message = "Trainer with the email or phone already exist";
+                    response.Message = "Trainer with the email or phone already exist, May be you didn't set the password";
                     return response;
 
                 }

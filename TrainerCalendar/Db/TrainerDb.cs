@@ -30,6 +30,8 @@ namespace TrainerCalendar.Db
                 Message = "No data found in request"
             };
 
+            //this is the object of user which we will get when the trainer already present in
+            //aspnetuser table otherwise this u will be null.
             User? u = jwtAuthenticationManager.Authenticate(trainerDto);
 
             ResponseDto responseDto = new ResponseDto();
@@ -85,18 +87,49 @@ namespace TrainerCalendar.Db
 
             else if (SkillName != "")
             {
-                //code to get trainer by skill name
+                List<Trainer> res = new List<Trainer>();
+                var trainers = dbContext.Trainers
+                    .Include(t => t.Skills);
+                foreach (var trainer in trainers)
+                {
+                    foreach(var skill in trainer.Skills)
+                    {
+                        if(skill.SkillName == SkillName)
+                        {
+                            res.Add(trainer); ;
+                        }
+                    }
+                }
+                return res;
             }
 
 
             else if (SkillId != -1)
             {
-                //code to get trainer by skill id
+                List<Trainer> res = new List<Trainer>();
+                var trainers = dbContext.Trainers.Include(t => t.Skills);
+                foreach(var trainer in trainers)
+                {
+                    foreach(var skill in trainer.Skills)
+                    {
+                        if (SkillId == skill.SkillId) res.Add(trainer);
+                    }
+                }
+                return res;
             }
 
             else if (SessionId != -1)
             {
-                //code to get trainer by session id
+                List<Trainer> res = new List<Trainer>();
+                var trainers = dbContext.Trainers.Include(t => t.Sessions).ToList();
+                foreach(var trainer in trainers)
+                {
+                    foreach(var session in trainer.Sessions)
+                    {
+                        if(session.SessionId == SessionId) res.Add(trainer);
+                    }
+                }
+                return res;
             }
 
             else
@@ -104,7 +137,6 @@ namespace TrainerCalendar.Db
                     .Include(t => t.Skills)
                     .Include(t => t.Sessions)
                     .ToListAsync();
-            return null;
         }
 
         public async Task<object> AddSkillsToTrainer(Trainer t, List<int> SkillIds)
