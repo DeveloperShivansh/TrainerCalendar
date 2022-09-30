@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TrainerCalendar.Authentications;
 using TrainerCalendar.Contexts;
+using TrainerCalendar.Db;
 using TrainerCalendar.Middlewares;
 using TrainerCalendar.Models;
 using TrainerCalendar.Models.Dto;
@@ -18,18 +19,20 @@ namespace TrainerCalendar.Controllers
         private UserManager<User> userManager;
         private ApplicationDbContext dbContext;
         private IJwtAuthenticationManager jwtAuthenticationManager;
-        public AccountController(UserManager<User> userManager, ApplicationDbContext dbContext, IJwtAuthenticationManager jwtAuthenticationManager)
+        private ITrainerDb trainerDb;
+        public AccountController(UserManager<User> userManager, ApplicationDbContext dbContext, IJwtAuthenticationManager jwtAuthenticationManager, ITrainerDb trainerDb)
         {
             this.jwtAuthenticationManager = jwtAuthenticationManager;
             this.userManager = userManager;
             this.dbContext = dbContext;
+            this.trainerDb = trainerDb;
         }
         // Post: api/account/gettoken/
         [Route("gettoken/")]
         [HttpPost]
         public object GetToken(UserDto userDto)
         {
-            User user = jwtAuthenticationManager.Authenticate(userDto);
+            User? user = jwtAuthenticationManager.Authenticate(userDto);
             if (user != null)
             {
                 var result = jwtAuthenticationManager.Generate(user).GetAwaiter().GetResult();
@@ -80,49 +83,9 @@ namespace TrainerCalendar.Controllers
         [Authorize(AuthenticationSchemes = "Bearer")]
         [Route("CreateTrainer/")]
         [HttpPost]
-        public object CreateTrainer(TrainerDto trainerDto)
+        public object CreateTrainer(TrainerDto? trainerDto)
         {
-            User? u = jwtAuthenticationManager.Authenticate(trainerDto);
-            
-            ResponseDto responseDto = new ResponseDto();
-            if (CurrentRequest.CurrentUser.Role == "Admin")
-            {
-                if (u != null)
-                {
-                    responseDto.Status = false;
-                    responseDto.Message = "Trainer with the given details already exists";
-                    return responseDto;
-                }
-                else
-                {
-                    if (trainerDto.ValidateCreation())
-                    {
-                        Trainer t = new Trainer();
-                        t.TrainerEmail = trainerDto.TrainerEmail;
-                        t.TrainerName = trainerDto.TrainerName;
-                        t.PhoneNumber = trainerDto.PhoneNumber;
-                        dbContext.Trainers.Add(t);
-                        dbContext.SaveChanges();
-
-                        responseDto.Status=true;
-                        responseDto.Message = "Trainer Created Successfully";
-                        responseDto.Data = t;
-                        return responseDto;
-                    } else
-                    {
-                        responseDto.Status = false;
-                        responseDto.Message = "All Fields are Required";
-                        return responseDto;
-                    }
-
-                }
-            } 
-            else
-            {
-                responseDto.Status = false;
-                responseDto.Message = "Only Admins Can Post Trainers";
-                return responseDto;
-            }
+            return trainerDb.PostTrainer(trainerDto);
         }
 
         [Route("SetTrainerPassword/")]
@@ -141,7 +104,8 @@ namespace TrainerCalendar.Controllers
                     responseDto.Status = false;
                     responseDto.Message = "Trainer Does Not Exists";
                     return responseDto;
-                } else
+                } 
+                else
                 {
                     User user = new User();
                     user.Email = t.TrainerEmail;
@@ -151,7 +115,7 @@ namespace TrainerCalendar.Controllers
 
                     //Here Send OTP On trainer Phone
 
-                    var result = userManager.CreateAsync(user, trainerDto.Password).GetAwaiter().GetResult();
+                    var result = await userManager.CreateAsync(user, trainerDto.Password);
                     if(result.Succeeded)
                     {
                         responseDto.Status=true;

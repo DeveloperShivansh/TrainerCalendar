@@ -56,6 +56,7 @@ namespace TrainerCalendar.Authentications
         {
             var Key = Encoding.UTF8.GetBytes(configuration["Jwt:Key"]);
             var securityKey = new SymmetricSecurityKey(Key);
+            
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new List<Claim>

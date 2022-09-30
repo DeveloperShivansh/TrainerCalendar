@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TrainerCalendar.Contexts;
+using TrainerCalendar.Db;
 using TrainerCalendar.Models;
 
 namespace TrainerCalendar.Controllers
@@ -15,10 +16,12 @@ namespace TrainerCalendar.Controllers
     public class SessionsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly ISessionDb _sdb;
 
-        public SessionsController(ApplicationDbContext context)
+        public SessionsController(ApplicationDbContext context , ISessionDb sdb)
         {
             _context = context;
+            _sdb = sdb;
         }
 
         // GET: api/Sessions
@@ -49,7 +52,19 @@ namespace TrainerCalendar.Controllers
 
             return session;
         }
+        [Route("GetSessionBy/")]
+        [HttpGet]
+        public async Task<ActionResult<Session>> GetSession(int skillid,int courseid,int trainerid)
+        {
+            
+            var session  = await _sdb.GetSession(skillid, courseid, trainerid);
+            if(session != null)
+            {
 
+                return Ok(session);
+            }
+                return NoContent();
+        }
         // PUT: api/Sessions/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

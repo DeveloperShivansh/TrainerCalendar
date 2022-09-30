@@ -8,8 +8,8 @@
         public string PhoneNumber { get; set; }
 
         //Navigation Properties
-        public int? UserId { get; set; }
         public User? User { get; set; }
-        public List<Skill> Skills { get; set; }
+        public List<Skill> Skills { get; set; } = new List<Skill>();
+        public List<Session> Sessions { get; set; } = new List<Session>();
     }
 }
