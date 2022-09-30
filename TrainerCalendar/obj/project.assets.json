@@ -9912,11 +9912,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Project\\TrainerCalendar\\TrainerCalendar\\TrainerCalendar.csproj",
+      "projectUniqueName": "D:\\NB\\TrainerCalendar\\TrainerCalendar\\TrainerCalendar.csproj",
       "projectName": "TrainerCalendar",
-      "projectPath": "D:\\Project\\TrainerCalendar\\TrainerCalendar\\TrainerCalendar.csproj",
+      "projectPath": "D:\\NB\\TrainerCalendar\\TrainerCalendar\\TrainerCalendar.csproj",
       "packagesPath": "C:\\Users\\nihal_bagwan\\.nuget\\packages\\",
-      "outputPath": "D:\\Project\\TrainerCalendar\\TrainerCalendar\\obj\\",
+      "outputPath": "D:\\NB\\TrainerCalendar\\TrainerCalendar\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\nihal_bagwan\\AppData\\Roaming\\NuGet\\NuGet.Config",
