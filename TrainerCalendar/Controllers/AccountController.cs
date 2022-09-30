@@ -33,20 +33,23 @@ namespace TrainerCalendar.Controllers
         public object GetToken(UserDto userDto)
         {
             User? user = jwtAuthenticationManager.Authenticate(userDto);
+            ResponseDto responseDto = new ResponseDto();
             if (user != null)
             {
                 var result = jwtAuthenticationManager.Generate(user).GetAwaiter().GetResult();
-                ResponseDto responseDto = new ResponseDto();
+                
                 responseDto.Status = true;
                 responseDto.Message = "Token Generation Successfull";
                 responseDto.Data = result;
                 return responseDto;
             }
-            else return new
+            else
             {
-                Status = false,
-                Message = "User with the provided credential not found"
-            };
+                responseDto.Status=false;
+                responseDto.Message = "User with the provided credential not found";
+                responseDto.Data = null;
+                return responseDto;
+            }
         }
 
 
@@ -83,9 +86,16 @@ namespace TrainerCalendar.Controllers
         [Authorize(AuthenticationSchemes = "Bearer")]
         [Route("CreateTrainer/")]
         [HttpPost]
-        public object CreateTrainer(TrainerDto? trainerDto)
+        public async Task<object> CreateTrainer(TrainerDto? trainerDto)
         {
-            return trainerDb.PostTrainer(trainerDto);
+            return await trainerDb.PostTrainer(trainerDto);
+        }
+
+        [HttpPost]
+        [Route("PostList/")]
+        public object PostList(List<int> list)
+        {
+            return list;
         }
 
         [Route("SetTrainerPassword/")]

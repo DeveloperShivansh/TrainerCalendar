@@ -37,6 +37,7 @@ namespace TrainerCalendar.Db
             ResponseDto responseDto = new ResponseDto();
             if (CurrentRequest.CurrentUser != null && CurrentRequest.CurrentUser.Role == "Admin")
             {
+                //if this null this means trainer already in aspnetusertable
                 if (u != null)
                 {
                     responseDto.Status = false;
@@ -45,6 +46,9 @@ namespace TrainerCalendar.Db
                 }
                 else
                 {
+                    //create new trainer only if he does not exist in the trainer table.
+                    //then the below result.status will return false
+
                     var result = trainerDto.ValidateCreation();
                     if (result.Status == true)
                     {
