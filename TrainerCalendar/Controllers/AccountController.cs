@@ -33,7 +33,10 @@ namespace TrainerCalendar.Controllers
         public object GetToken(UserDto userDto)
         {
             User? user = jwtAuthenticationManager.Authenticate(userDto);
+<<<<<<< HEAD
             ResponseDto responseDto = new ResponseDto();
+=======
+>>>>>>> c854deeb603f076ba1495bb06866817fd2399cd6
             if (user != null)
             {
                 var result = jwtAuthenticationManager.Generate(user).GetAwaiter().GetResult();
@@ -86,6 +89,7 @@ namespace TrainerCalendar.Controllers
         [Authorize(AuthenticationSchemes = "Bearer")]
         [Route("CreateTrainer/")]
         [HttpPost]
+<<<<<<< HEAD
         public async Task<object> CreateTrainer(TrainerDto? trainerDto)
         {
             return await trainerDb.PostTrainer(trainerDto);
@@ -96,6 +100,11 @@ namespace TrainerCalendar.Controllers
         public object PostList(List<int> list)
         {
             return list;
+=======
+        public object CreateTrainer(TrainerDto? trainerDto)
+        {
+            return trainerDb.PostTrainer(trainerDto);
+>>>>>>> c854deeb603f076ba1495bb06866817fd2399cd6
         }
 
         [Route("SetTrainerPassword/")]

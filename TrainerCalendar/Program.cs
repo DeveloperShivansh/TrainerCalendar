@@ -13,6 +13,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<IJwtAuthenticationManager, JwtAuthenticationManager>();
 builder.Services.AddScoped<ITrainerDb, TrainerDb>();
+<<<<<<< HEAD
+=======
+builder.Services.AddScoped<ISessionDb, SessionDb>();
+>>>>>>> c854deeb603f076ba1495bb06866817fd2399cd6
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
