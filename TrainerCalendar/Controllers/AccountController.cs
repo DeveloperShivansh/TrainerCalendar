@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TrainerCalendar.Authentications;
 using TrainerCalendar.Contexts;
 using TrainerCalendar.Db;
@@ -30,31 +31,82 @@ namespace TrainerCalendar.Controllers
         // Post: api/account/gettoken/
         [Route("gettoken/")]
         [HttpPost]
-        public object GetToken(UserDto userDto)
+        public async Task<IActionResult> GetToken(UserDto userDto, [FromQuery] string? view = "")
         {
             User? user = jwtAuthenticationManager.Authenticate(userDto);
-<<<<<<< HEAD
+
             ResponseDto responseDto = new ResponseDto();
-=======
->>>>>>> c854deeb603f076ba1495bb06866817fd2399cd6
             if (user != null)
             {
+                if (view == "") return BadRequest(new ResponseDto(false, "view is required in query string"));
+                else if (user.Role == "Trainer" && view != "trainer") return Unauthorized(new ResponseDto(false, "You cannot login as a trainer from admin page."));
+                else if (user.Role == "Admin" && view != "admin") return Unauthorized(new ResponseDto(false, "You cannot loging as admin from trainer page"));
+
                 var result = jwtAuthenticationManager.Generate(user).GetAwaiter().GetResult();
                 
                 responseDto.Status = true;
                 responseDto.Message = "Token Generation Successfull";
                 responseDto.Data = result;
-                return responseDto;
+                return Ok(responseDto);
             }
             else
             {
                 responseDto.Status=false;
                 responseDto.Message = "User with the provided credential not found";
                 responseDto.Data = null;
-                return responseDto;
+                return NotFound(responseDto);
             }
         }
 
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [Route("IsValidToken/")]
+        [HttpGet]
+        public async Task<IActionResult> IsValidToken()
+        {
+            if (CurrentRequest.CurrentUser.Role == "Admin")
+            {
+                return Ok(
+                    new ResponseDto(true, "Token Is Valid", new { 
+                        Role = "Admin", 
+                        Admin = new {
+                            Name = CurrentRequest.CurrentUser.UserName,
+                            Email = CurrentRequest.CurrentUser.Email,
+                            PhoneNumber = CurrentRequest.CurrentUser.PhoneNumber
+                        } 
+                    }));
+            }
+            else
+            {
+                Trainer? t = CurrentRequest.CurrentUser.GetTrainer(dbContext);
+                return Ok(new ResponseDto(true, "Token Is Valid", new { Role = "Trainer", Trainer = t }));
+            }
+        }
+
+        [Route("IsTrainerPasswordSet/")]
+        [HttpPost]
+        public async Task<IActionResult> IsTrainerPasswordSet(TrainerDto? trainerDto)
+        {
+            string trainerEmail = trainerDto.TrainerEmail;
+            string phoneNumber = trainerDto.PhoneNumber;
+
+            User? user = null;
+            try
+            {
+                if (trainerEmail != null) user = await userManager.FindByEmailAsync(trainerEmail);
+                else if (phoneNumber != null) user = userManager.Users.FirstOrDefault(u => u.PhoneNumber == phoneNumber);
+
+                if (user != null) return Ok(new ResponseDto(true, "Trainer Already Authenticated", dbContext.Trainers.Include(t=>t.Skills).Include(t=>t.Sessions).FirstOrDefault(t => t.TrainerEmail == user.Email)));
+                else
+                {
+                    Trainer? t = null;
+                    if (trainerEmail != null) t = dbContext.Trainers.FirstOrDefault(t => t.TrainerEmail == trainerEmail);
+                    else if (phoneNumber != null) t = dbContext.Trainers.FirstOrDefault(t => t.PhoneNumber == phoneNumber);
+                    if (t != null) return Ok(new ResponseDto(false, "PasswordNotSet", t));
+                    else return Ok(new ResponseDto(false, "Invalid Email or Phone"));
+                }
+            }
+            catch (Exception ex) { return BadRequest(new ResponseDto(false, ex.Message)); }
+        }
 
         //For Testing Purpose Only
         [Route("CreateAdmin/")]
@@ -89,64 +141,62 @@ namespace TrainerCalendar.Controllers
         [Authorize(AuthenticationSchemes = "Bearer")]
         [Route("CreateTrainer/")]
         [HttpPost]
-<<<<<<< HEAD
+
         public async Task<object> CreateTrainer(TrainerDto? trainerDto)
         {
             return await trainerDb.PostTrainer(trainerDto);
         }
 
-        [HttpPost]
-        [Route("PostList/")]
-        public object PostList(List<int> list)
-        {
-            return list;
-=======
-        public object CreateTrainer(TrainerDto? trainerDto)
-        {
-            return trainerDb.PostTrainer(trainerDto);
->>>>>>> c854deeb603f076ba1495bb06866817fd2399cd6
-        }
-
         [Route("SetTrainerPassword/")]
         [HttpPost]
-        public async Task<object> SetTrainerPassword(TrainerDto trainerDto)
+        public async Task<IActionResult> SetTrainerPassword(TrainerDto? trainerDto)
         {
             ResponseDto responseDto = new ResponseDto();
             if(trainerDto.ValidateForSettingPassword())
             {
                 Trainer? t = null;
                 if(trainerDto.TrainerEmail != null ) t = dbContext.Trainers.FirstOrDefault(t => t.TrainerEmail == trainerDto.TrainerEmail);
-                else if(trainerDto.PhoneNumber != null) t= dbContext.Trainers.FirstOrDefault(t=>t.PhoneNumber == trainerDto.PhoneNumber);
+                else if(trainerDto.PhoneNumber != null) t = dbContext.Trainers.FirstOrDefault(t=>t.PhoneNumber == trainerDto.PhoneNumber);
 
+                //if trainer is logging in before admin created his/her account.
                 if(t == null)
                 {
                     responseDto.Status = false;
-                    responseDto.Message = "Trainer Does Not Exists";
-                    return responseDto;
+                    responseDto.Message = "Trainer not found, request admin to create one";
+                    return NotFound(responseDto);
                 } 
                 else
                 {
                     User user = new User();
+                    user.Id = t.TrainerId.ToString();
                     user.Email = t.TrainerEmail;
                     user.PhoneNumber = t.PhoneNumber;
                     user.Role = "Trainer";
                     user.UserName = t.TrainerName;
 
-                    //Here Send OTP On trainer Phone
+
+                    //send otp on phone and remove the below code then we have to take the below 
+                    //code in the next method where we will check if the otp is valid only then
+                    //we create the user. but for now it is creating without check.
 
                     var result = await userManager.CreateAsync(user, trainerDto.Password);
+
                     if(result.Succeeded)
                     {
+                        //adding foreign key in the trainer table
+                        t.User = user;
+                        await dbContext.SaveChangesAsync();
                         responseDto.Status=true;
-                        responseDto.Message = "Password Set Successfull";
+                        responseDto.Message = "Password Reset Successfull";
                         responseDto.Data = t;
-                        return responseDto;
-                    } else
+                        return Ok(responseDto);
+                    } 
+                    else
                     {
                         responseDto.Status = false;
                         responseDto.Message = "Failed to Set Password";
                         responseDto.Data = result.Errors.ToList();
-                        return responseDto;
+                        return BadRequest(responseDto);
                     }
                 }
             }
@@ -155,26 +205,33 @@ namespace TrainerCalendar.Controllers
                 responseDto.Status = false;
                 responseDto.Message = "Failed Set Password";
                 responseDto.Data = "Phone or Email and Password Field is Required";
-                return responseDto;
+                return BadRequest(responseDto);
             }
         }
 
-        // PUT api/<AccountController>/5
-        [Route("testauth/")]
-        [HttpGet]
-        public object Get()
-        {
-            return new
-            {
-                status = true,
-                message = "authorization successfull"
-            };
-        }
+
 
         // DELETE api/<AccountController>/5
+        [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<ActionResult<object>> Delete(int id)
         {
+            User u = CurrentRequest.CurrentUser.User;
+            ResponseDto responseDto = new ResponseDto();
+            if(u.Role == "Trainer")
+            {
+                responseDto.Status = false;
+                responseDto.Message = "Only Admin Can Delete Trainers";
+                responseDto.Data = null;
+                return Unauthorized(responseDto);
+            } 
+            else
+            {
+                responseDto = await trainerDb.DeleteTrainerById(id);
+                if (responseDto.Status == false) return NotFound(responseDto);
+                else return Ok(responseDto);
+            }
+            
         }
     }
 }

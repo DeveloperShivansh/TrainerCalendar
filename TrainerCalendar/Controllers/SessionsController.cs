@@ -2,15 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TrainerCalendar.Contexts;
 using TrainerCalendar.Db;
 using TrainerCalendar.Models;
+using TrainerCalendar.Models.Dto;
+using TrainerCalendar.Middlewares;
 
 namespace TrainerCalendar.Controllers
 {
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
     public class SessionsController : ControllerBase
@@ -52,61 +56,68 @@ namespace TrainerCalendar.Controllers
 
             return session;
         }
-        [Route("GetSessionBy/")]
+        [Route("GetSessionsBy/")]
         [HttpGet]
-        public async Task<ActionResult<Session>> GetSession(int skillid,int courseid,int trainerid)
+        public async Task<ActionResult<Session>> GetSessionBy([FromQuery] SessionByDto? SessionBy)
         {
-            
-            var session  = await _sdb.GetSession(skillid, courseid, trainerid);
-            if(session != null)
+            var sessions = await _sdb.GetSessions(SessionBy);
+            if(sessions != null)
             {
-
-                return Ok(session);
+                return Ok(sessions);
             }
-                return NoContent();
+            return NoContent();
         }
         // PUT: api/Sessions/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSession(int id, Session session)
+        public async Task<IActionResult> PutSession(int id, SessionDto sessionDto)
         {
-            if (id != session.SessionId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(session).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!SessionExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            ResponseDto data = await _sdb.UpdateSession(sessionId:id, sessionDto:sessionDto);
+            if (data.Status == false) return NotFound(data);
+            else return Ok(data);
         }
 
         // POST: api/Sessions
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Session>> PostSession(Session session)
+        public async Task<ActionResult<Session>> PostSession(SessionDto sessionDto)
         {
-          if (_context.Sessions == null)
-          {
-              return Problem("Entity set 'ApplicationDbContext.Sessions'  is null.");
-          }
-            _context.Sessions.Add(session);
-            await _context.SaveChangesAsync();
+            if (_context.Sessions == null)
+            {
+                return Problem("Entity set 'ApplicationDbContext.Sessions'  is null.");
+            }
+            Trainer t = CurrentRequest.CurrentUser.GetTrainer(_context);
+
+            if (sessionDto.TrainerId == null)
+            {
+                if (CurrentRequest.CurrentUser.Role == "Trainer")
+                {
+                    sessionDto.TrainerId = t.TrainerId;
+                }
+                else return BadRequest(new ResponseDto(false, "TrainerId is Required To Create New Session"));
+            }
+            if(sessionDto.SkillId == null)
+            {
+                var skills = _context.Skills.Include(s => s.Courses).ToList();
+                foreach(var skill in skills)
+                {
+                    foreach(var course in skill.Courses)
+                    {
+                        if(course.CourseId == sessionDto.CourseId)
+                        {
+                            sessionDto.SkillId = skill.SkillId;
+                            break;
+                        }
+                    }
+                }
+            }
+            Session? session = sessionDto.GetSession();
+            if (session != null)
+            {
+
+                _context.Sessions.Add(session);
+                await _context.SaveChangesAsync();
+            }
 
             return CreatedAtAction("GetSession", new { id = session.SessionId }, session);
         }
@@ -115,6 +126,7 @@ namespace TrainerCalendar.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSession(int id)
         {
+            ResponseDto responseDto = new ResponseDto();
             if (_context.Sessions == null)
             {
                 return NotFound();
@@ -127,13 +139,10 @@ namespace TrainerCalendar.Controllers
 
             _context.Sessions.Remove(session);
             await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool SessionExists(int id)
-        {
-            return (_context.Sessions?.Any(e => e.SessionId == id)).GetValueOrDefault();
+            responseDto.Status = true;
+            responseDto.Message = "Session Deleted Sucessfully";
+            responseDto.Data = session;
+            return Ok(responseDto);
         }
     }
 }

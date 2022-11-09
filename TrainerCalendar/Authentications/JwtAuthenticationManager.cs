@@ -70,7 +70,7 @@ namespace TrainerCalendar.Authentications
                 configuration["Jwt:Issuer"],
                 configuration["Jwt:Audience"],
                 claims,
-                expires: DateTime.Now.AddMinutes(15),
+                expires: DateTime.Now.AddHours(12),
                 signingCredentials: credentials
             );
 

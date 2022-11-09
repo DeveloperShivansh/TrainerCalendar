@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\NB\\TrainerCalendar\\TrainerCalendar\\TrainerCalendar.csproj": {}
+    "C:\\Users\\shivansh_shrivastava\\source\\repos\\TrainerCalendar\\TrainerCalendar\\TrainerCalendar.csproj": {}
   },
   "projects": {
-    "D:\\NB\\TrainerCalendar\\TrainerCalendar\\TrainerCalendar.csproj": {
+    "C:\\Users\\shivansh_shrivastava\\source\\repos\\TrainerCalendar\\TrainerCalendar\\TrainerCalendar.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\NB\\TrainerCalendar\\TrainerCalendar\\TrainerCalendar.csproj",
+        "projectUniqueName": "C:\\Users\\shivansh_shrivastava\\source\\repos\\TrainerCalendar\\TrainerCalendar\\TrainerCalendar.csproj",
         "projectName": "TrainerCalendar",
-        "projectPath": "D:\\NB\\TrainerCalendar\\TrainerCalendar\\TrainerCalendar.csproj",
-        "packagesPath": "C:\\Users\\nihal_bagwan\\.nuget\\packages\\",
-        "outputPath": "D:\\NB\\TrainerCalendar\\TrainerCalendar\\obj\\",
+        "projectPath": "C:\\Users\\shivansh_shrivastava\\source\\repos\\TrainerCalendar\\TrainerCalendar\\TrainerCalendar.csproj",
+        "packagesPath": "C:\\Users\\shivansh_shrivastava\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\shivansh_shrivastava\\source\\repos\\TrainerCalendar\\TrainerCalendar\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\nihal_bagwan\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\shivansh_shrivastava\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -43,6 +43,10 @@
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
               "version": "[6.0.9, )"
+            },
+            "Microsoft.AspNetCore.Cors": {
+              "target": "Package",
+              "version": "[2.2.0, )"
             },
             "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
               "target": "Package",
