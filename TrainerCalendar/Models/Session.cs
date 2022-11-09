@@ -1,17 +1,27 @@
-﻿namespace TrainerCalendar.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace TrainerCalendar.Models
 {
     public class Session
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int SessionId { get; set; }
+        [Required(ErrorMessage = "SessionName is required")]
         public string SessionName { get; set; }
+        [Required(ErrorMessage = "TrainingMode is required")]
         public string TrainingMode { get; set; }
+
+        [Required(ErrorMessage = "TrainingLocation is required")]
         public string TrainingLocation { get; set; }
-        public DateTime Date { get; set; }
+
+        [Required(ErrorMessage = "StartTime is required")]
         public DateTime StartTime { get; set; }
+        [Required(ErrorMessage = "EndTime is required")]
         public DateTime EndTime { get; set; }
 
         //Navigations
-        public int? CouresId { get; set; }
+        public int? CourseId { get; set; }
         public Course? Course { get; set; }
 
         public int? TrainerId { get; set; }

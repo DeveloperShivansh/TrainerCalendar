@@ -8,11 +8,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TrainerCalendar.Contexts;
 using TrainerCalendar.Db;
+using TrainerCalendar.Middlewares;
 using TrainerCalendar.Models;
 using TrainerCalendar.Models.Dto;
 
 namespace TrainerCalendar.Controllers
 {
+    // the role can be also be specified in this attribute but since i am returning the reason along with
+    // the response that's why manual.
     [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
@@ -27,15 +30,33 @@ namespace TrainerCalendar.Controllers
             this.trainerDb = trainerDb;
         }
 
+        [Route("current/")]
+        [HttpGet]
+        public async Task<IActionResult> GetCurrentTrainer()
+        {
+            CurrentRequest.CurrentUser.Print();
+            Trainer? t = _context.Trainers.Include(t => t.Sessions).Include(t => t.Skills).FirstOrDefault(t => t.TrainerEmail == CurrentRequest.CurrentUser.Email);
+            if (t != null) return Ok(t);
+            else return NotFound(new ResponseDto(false, "Current User is not trainer"));
+        }
+
         // GET: api/Trainers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Trainer>>> GetTrainers()
         {
-            if (_context.Trainers == null)
+            if (CurrentRequest.CurrentUser.Role == "Admin")
             {
-                return NotFound();
+                if (_context.Trainers == null)
+                {
+                    return NotFound();
+                }
+                return await _context.Trainers.Include(x => x.Skills).ThenInclude(x => x.Courses).ToListAsync();
+            } 
+
+            else
+            {
+                return Unauthorized(new ResponseDto(false, "Only Admin Can Get All Trainers"));
             }
-            return await _context.Trainers.Include(x => x.Skills).ThenInclude(x => x.Courses).ToListAsync();
         }
 
         // GET: api/Trainers/5
@@ -53,119 +74,119 @@ namespace TrainerCalendar.Controllers
                 return NotFound();
             }
 
-            return trainer[0];
+            return Ok(trainer[0]);
         }
         [Route("GetTrainersBySkillName/")]
         [HttpGet]
         public async Task<ActionResult<List<Trainer>>> GetTrainersBySkillName(string SkillName)
         {
-            Console.WriteLine("Your Skill Naame: " + SkillName);
-            if (_context.Trainers == null)
+            if (CurrentRequest.CurrentUser.Role == "Admin")
             {
-                return NotFound();
-            }
-            List<Trainer> trainer = (List<Trainer>) await trainerDb.GetTrainers(SkillName: SkillName);
+                if (_context.Trainers == null)
+                {
+                    return NotFound();
+                }
+                List<Trainer> trainer = (List<Trainer>)await trainerDb.GetTrainers(SkillName: SkillName);
 
-            if (trainer.Count == 0)
-            {
-                return NotFound();
-            }
+                if (trainer.Count == 0)
+                {
+                    return NotFound();
+                }
 
-            return trainer;
+                return Ok(trainer);
+            } else return Unauthorized(new ResponseDto(false, "Only Admin Can Get All Trainers"));
         }
 
         // PUT: api/Trainers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTrainer(int id, Trainer trainer)
+        public async Task<IActionResult> PutTrainer(int id, TrainerDto? trainerDto)
         {
-            if (id != trainer.TrainerId)
+            if (CurrentRequest.CurrentUser.Role == "Admin")
             {
-                return BadRequest();
-            }
-
-            _context.Entry(trainer).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TrainerExists(id))
+                if (id != trainerDto.TrainerId)
                 {
-                    return NotFound();
+                    trainerDto.TrainerId = id;
                 }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
+                ResponseDto response = await trainerDb.UpdateTrainer(trainerDto, Id: id);
+                return Ok(response);
+            }
+            else return Unauthorized(new ResponseDto(false, "Only Admin Can Update Trainer Profile"));
         }
 
-        // POST: api/Trainers
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<object> PostTrainer(TrainerDto trainerDto)
+        public async Task<IActionResult> PostTrainer(TrainerDto? trainerDto)
         {
-          if (_context.Trainers == null)
-          {
-              return Problem("Entity set 'ApplicationDbContext.Trainers'  is null.");
-          }
-          return await trainerDb.PostTrainer(trainerDto);
+            if (CurrentRequest.CurrentUser.Role == "Admin")
+            {
+                if (_context.Trainers == null)
+                {
+                    return Problem("Entity set 'ApplicationDbContext.Trainers'  is null.");
+                }
+
+                ResponseDto responseDto = await trainerDb.PostTrainer(trainerDto);
+
+                if(responseDto.Status == false) return BadRequest(responseDto);
+
+                else return CreatedAtAction("PostTrainer", responseDto);
+            }
+            else return Unauthorized(new ResponseDto(false, "Only Admin Can Create Trainers"));
         }
 
         // DELETE: api/Trainers/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTrainer(int id)
         {
-            if (_context.Trainers == null)
+            if (CurrentRequest.CurrentUser.Role == "Admin")
             {
-                return NotFound();
-            }
-            var trainer = await _context.Trainers.FindAsync(id);
-            if (trainer == null)
-            {
-                return NotFound();
-            }
+                if (_context.Trainers == null)
+                {
+                    return NotFound();
+                }
+                var trainer = await _context.Trainers.FindAsync(id);
+                if (trainer == null)
+                {
+                    return NotFound();
+                }
 
-            _context.Trainers.Remove(trainer);
-            await _context.SaveChangesAsync();
+                _context.Trainers.Remove(trainer);
+                await _context.SaveChangesAsync();
 
-            return NoContent();
+                return NoContent();
+            }
+            else return Unauthorized(new ResponseDto(false, "Only Admin Can Delete Trainers"));
         }
 
-        [Authorize(AuthenticationSchemes = "Bearer")]
-        [Route("AddSkill/")]
+        [Route("AddSkills/")]
         [HttpPost]
-        public object AddSkill(List<int> SkillIds)
+        public async Task<object> AddSkills(TrainerDto trainerDto)
         {
+            List<int> SkillIds = trainerDto.Skills;
             if (SkillIds.Count == 0) return new
             {
                 Status = false,
                 Message = "No Skill Id found in the request"
             };
+            Trainer? t = null;
+            if (trainerDto.TrainerId != -1) t = trainerDb.GetTrainerById(trainerDto.TrainerId);
+            if(t == null) return new ResponseDto(false, "Trainer with the given id not exists", null);
 
             foreach (int skillId in SkillIds)
             {
-                Console.WriteLine("Searhing skill with id: " + skillId.ToString());
                 Skill? s = _context.Skills.FirstOrDefault(s => s.SkillId == skillId);
-                if (s != null) {
-                    Console.WriteLine("Found: " + s.SkillName);
+                if (s != null)
+                {
+                    if (t.Skills.FindIndex(s => s.SkillId == skillId) < 0) t.Skills.Add(s);
                 }
+                else continue;
             }
-            _context.SaveChanges();
+
+            await _context.SaveChangesAsync();
             return new {
                 Status = true,
                 Message = "Skill updated Successfully"
             };
-        }
-
-        private bool TrainerExists(int id)
-        {
-            return (_context.Trainers?.Any(e => e.TrainerId == id)).GetValueOrDefault();
         }
     }
 }

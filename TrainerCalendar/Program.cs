@@ -8,11 +8,27 @@ using TrainerCalendar.Contexts;
 using TrainerCalendar.Db;
 using TrainerCalendar.Middlewares;
 using TrainerCalendar.Models;
+using Microsoft.AspNetCore.Cors;
+using TrainerCalendar.Tools;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<IJwtAuthenticationManager, JwtAuthenticationManager>();
 builder.Services.AddScoped<ITrainerDb, TrainerDb>();
+builder.Services.AddScoped<ISessionDb, SessionDb>();
+builder.Services.AddScoped<ICourseDb, CourseDb>();
+builder.Services.AddScoped<IBasicTools, BasicTools>();
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:3000", "http://localhost:4200", "https://localhost:3000")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+        });
+});
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -55,7 +71,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseCors();
 app.UseHttpsRedirection();
 
 app.UseAuthentication();

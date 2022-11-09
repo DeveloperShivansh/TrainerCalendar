@@ -25,11 +25,34 @@ namespace TrainerCalendar.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Skill>>> GetSkills()
         {
-          if (_context.Skills == null)
-          {
-              return NotFound();
-          }
+            if (_context.Skills == null)
+            {
+                return NotFound();
+            }
             return await _context.Skills.ToListAsync();
+        }
+
+        [Route("GetSkillsBy/")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Skill>>> GetSkillsBy([FromQuery] int? courseId = -1)
+        {
+            List<Skill> res = new List<Skill>();
+            if(courseId != -1)
+            {
+                var skills = await _context.Skills.Include(s => s.Courses).ToListAsync();
+                foreach(var skill in skills)
+                {
+                    foreach(var course in skill.Courses)
+                    {
+                        if (course.CourseId == courseId)
+                        {
+                            res.Add(skill);
+                            return res;
+                        }
+                    }
+                }
+            }
+            return Ok(await _context.Skills.ToListAsync());
         }
 
         // GET: api/Skills/5
@@ -86,10 +109,10 @@ namespace TrainerCalendar.Controllers
         [HttpPost]
         public async Task<ActionResult<Skill>> PostSkill(Skill skill)
         {
-          if (_context.Skills == null)
-          {
-              return Problem("Entity set 'ApplicationDbContext.Skills'  is null.");
-          }
+            if (_context.Skills == null)
+            {
+                return Problem("Entity set 'ApplicationDbContext.Skills'  is null.");
+            }
             _context.Skills.Add(skill);
             await _context.SaveChangesAsync();
 

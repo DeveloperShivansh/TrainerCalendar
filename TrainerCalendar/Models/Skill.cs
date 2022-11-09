@@ -1,8 +1,12 @@
-﻿namespace TrainerCalendar.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace TrainerCalendar.Models
 {
     public class Skill
     {
         public int SkillId { get; set; }
+
+        [Required]
         public string SkillName { get; set; }
 
         //Navigation Properties

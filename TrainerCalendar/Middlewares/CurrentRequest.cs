@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using TrainerCalendar.Authentications;
 using TrainerCalendar.Contexts;
 using TrainerCalendar.Models;
@@ -13,7 +14,7 @@ namespace TrainerCalendar.Middlewares
         public User User { get; set; }
         public Trainer? GetTrainer(ApplicationDbContext dbContext)
         {
-            if (Role == "Trainer") return dbContext.Trainers.FirstOrDefault(t => t.TrainerEmail == Email);
+            if (Role == "Trainer") return dbContext.Trainers.Include(t => t.User).FirstOrDefault(t => t.TrainerEmail == Email);
             else return null;
         }
 
@@ -21,6 +22,15 @@ namespace TrainerCalendar.Middlewares
         {
             if (Role == "Trainer") return true;
             else return false;
+        }
+
+        public void Print()
+        {
+            Console.WriteLine("<------ User ------>");
+            Console.WriteLine("Name: " + this.UserName);
+            Console.WriteLine("Email: ", this.Email);
+            Console.WriteLine("Number: " + this.PhoneNumber);
+            Console.WriteLine("---------------------");
         }
     }
     public class CurrentRequest
