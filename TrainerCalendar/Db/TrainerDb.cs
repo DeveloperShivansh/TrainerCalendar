@@ -30,7 +30,9 @@ namespace TrainerCalendar.Db
         }
         public async Task<ResponseDto> PostTrainer(TrainerDto trainerDto)
         {
-            if (trainerDto == null) return new ResponseDto(false, "No data found in request");
+            if (trainerDto == null || trainerDto.TrainerEmail == null || trainerDto.PhoneNumber == null || trainerDto.TrainerName == null) 
+                return new ResponseDto(false, "Please fill the required details");
+
 
             //this is the object of user which we will get when the trainer already present in
             //aspnetuser table otherwise this u will be null.

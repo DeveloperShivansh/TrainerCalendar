@@ -10,6 +10,7 @@ using TrainerCalendar.Middlewares;
 using TrainerCalendar.Models;
 using Microsoft.AspNetCore.Cors;
 using TrainerCalendar.Tools;
+using TrainerCalendar.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,6 +60,8 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 {
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
 });
+
+builder.Services.AddSignalR(builder => builder.EnableDetailedErrors = true);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -78,7 +81,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseRequestProcessorMiddleware();
-
+app.MapHub<ChatHub>("/chat");
 app.MapControllers();
 
 app.Run();

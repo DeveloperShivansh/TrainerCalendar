@@ -14,7 +14,7 @@ namespace TrainerCalendar.Middlewares
         public User User { get; set; }
         public Trainer? GetTrainer(ApplicationDbContext dbContext)
         {
-            if (Role == "Trainer") return dbContext.Trainers.Include(t => t.User).FirstOrDefault(t => t.TrainerEmail == Email);
+            if (Role == "Trainer") return dbContext.Trainers.Include(t => t.User).Include(t => t.Skills).Include(t => t.Sessions).FirstOrDefault(t => t.TrainerEmail == Email);
             else return null;
         }
 

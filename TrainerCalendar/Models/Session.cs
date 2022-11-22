@@ -20,6 +20,8 @@ namespace TrainerCalendar.Models
         [Required(ErrorMessage = "EndTime is required")]
         public DateTime EndTime { get; set; }
 
+        public DateTime CreatedOn { get; set; } = DateTime.Now;
+        public DateTime UpdatedOn { get; set; } = DateTime.Now;
         //Navigations
         public int? CourseId { get; set; }
         public Course? Course { get; set; }

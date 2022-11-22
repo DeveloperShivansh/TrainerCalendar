@@ -114,7 +114,6 @@ namespace TrainerCalendar.Controllers
             Session? session = sessionDto.GetSession();
             if (session != null)
             {
-
                 _context.Sessions.Add(session);
                 await _context.SaveChangesAsync();
             }

@@ -30,7 +30,8 @@ namespace TrainerCalendar.Db
 
             if(skillId != -1 && courseId != -1 && trainerId!= -1)
             {
-                var result = _dbContext.Sessions.Where(s => s.SkillId == skillId && s.CourseId == courseId && s.TrainerId == trainerId);
+                var result = _dbContext.Sessions.Where(s => s.SkillId == skillId && s.CourseId == courseId && s.TrainerId == trainerId)
+                    .Include(s => s.Trainer).ThenInclude(t => t.Skills);
 
                 if (result != null)
                 {
@@ -42,7 +43,8 @@ namespace TrainerCalendar.Db
             }
             else if (skillId != -1 && courseId == -1 && trainerId == -1)
             {
-                var result = _dbContext.Sessions.Where(s => s.SkillId == skillId);
+                var result = _dbContext.Sessions.Where(s => s.SkillId == skillId)
+                    .Include(s => s.Trainer).ThenInclude(t => t.Skills);
 
                 if (result != null)
                 {
@@ -54,7 +56,8 @@ namespace TrainerCalendar.Db
             else if (skillId == -1 && courseId != -1 && trainerId == -1)
             {
 
-                var result = _dbContext.Sessions.Where(s => s.CourseId == courseId);
+                var result = _dbContext.Sessions.Where(s => s.CourseId == courseId)
+                    .Include(s => s.Trainer).ThenInclude(t => t.Skills);
 
                 if (result != null)
                 {
@@ -68,7 +71,8 @@ namespace TrainerCalendar.Db
             else if (skillId == -1 && courseId == -1 && trainerId != -1)
             {
 
-                var result = _dbContext.Sessions.Where(s => s.TrainerId == trainerId);
+                var result = _dbContext.Sessions.Where(s => s.TrainerId == trainerId)
+                    .Include(s => s.Trainer).ThenInclude(t => t.Skills);
 
                 if (result != null)
                 {
@@ -82,7 +86,8 @@ namespace TrainerCalendar.Db
             else if (skillId != -1 && courseId != -1 && trainerId == -1)
             {
 
-                var result = _dbContext.Sessions.Where(s => s.CourseId == courseId && s.SkillId == skillId);
+                var result = _dbContext.Sessions.Where(s => s.CourseId == courseId && s.SkillId == skillId)
+                    .Include(s => s.Trainer).ThenInclude(t => t.Skills);
 
                 if (result != null)
                 {
@@ -90,13 +95,12 @@ namespace TrainerCalendar.Db
                     return await result.ToListAsync();
 
                 }
-
 
             }
             else if (skillId == -1 && courseId != -1 && trainerId != -1)
             {
-
-                var result = _dbContext.Sessions.Where(s => s.CourseId == courseId && s.TrainerId==trainerId);
+                var result = _dbContext.Sessions.Where(s => s.CourseId == courseId && s.TrainerId==trainerId)
+                    .Include(s => s.Trainer).ThenInclude(t => t.Skills);
 
                 if (result != null)
                 {
@@ -104,13 +108,12 @@ namespace TrainerCalendar.Db
                     return await result.ToListAsync();
 
                 }
-
-
             }
             else if (skillId != -1 && courseId == -1 && trainerId != -1)
             {
 
-                var result = _dbContext.Sessions.Where(s => s.SkillId == skillId && s.TrainerId ==trainerId);
+                var result = _dbContext.Sessions.Where(s => s.SkillId == skillId && s.TrainerId ==trainerId)
+                    .Include(s => s.Trainer).ThenInclude(t => t.Skills); ;
 
                 if (result != null)
                 {
@@ -118,13 +121,12 @@ namespace TrainerCalendar.Db
                     return await result.ToListAsync();
 
                 }
-
-
             }
             else if (sessionId != -1)
             {
                 List<Session> sessions = new List<Session>();
-                Session? session = _dbContext.Sessions.FirstOrDefault(s => s.SessionId == sessionId);
+                Session? session = _dbContext.Sessions
+                    .Include(s => s.Trainer).ThenInclude(t => t.Skills).FirstOrDefault(s => s.SessionId == sessionId);
                 if (session != null)
                 {
                     sessions.Add(session);
@@ -133,7 +135,8 @@ namespace TrainerCalendar.Db
             }
             else if(SessionBy != null)
             {
-                var result = _dbContext.Sessions.Where(s => s.StartTime >= SessionBy.StartTime && s.EndTime <= SessionBy.EndTime);
+                var result = _dbContext.Sessions.Where(s => s.StartTime >= SessionBy.StartTime && s.EndTime <= SessionBy.EndTime)
+                    .Include(s => s.Trainer).ThenInclude(t => t.Skills);
 
                 if(result != null)
                 {
@@ -178,6 +181,7 @@ namespace TrainerCalendar.Db
                     if(sessionDto.EndTime != new DateTime(day: 1, month: 1, year: 1)) session.EndTime = sessionDto.EndTime;
                     try
                     {
+                        session.UpdatedOn = DateTime.Now;
                         await _dbContext.SaveChangesAsync();
                         responseDto.Status = true;
                         responseDto.Message = "Session Updated Successfully";

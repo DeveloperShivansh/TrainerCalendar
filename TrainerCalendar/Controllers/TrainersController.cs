@@ -51,7 +51,7 @@ namespace TrainerCalendar.Controllers
                     return NotFound();
                 }
                 return await _context.Trainers.Include(x => x.Skills).ThenInclude(x => x.Courses).ToListAsync();
-            } 
+            }
 
             else
             {
@@ -153,7 +153,7 @@ namespace TrainerCalendar.Controllers
                 _context.Trainers.Remove(trainer);
                 await _context.SaveChangesAsync();
 
-                return NoContent();
+                return NotFound();
             }
             else return Unauthorized(new ResponseDto(false, "Only Admin Can Delete Trainers"));
         }

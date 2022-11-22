@@ -136,6 +136,28 @@ namespace TrainerCalendar.Controllers
                 };
             }
         }
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [Route("GetUser/")]
+        [HttpGet]
+        public async Task<object> GetUser()
+        {
+            if (CurrentRequest.CurrentUser.Role == "Admin")
+            {
+                return new { 
+                    User = CurrentRequest.CurrentUser.User,
+                    IsTrainer = false,
+                    IsAdmin = true
+                };
+            } 
+            else
+            {
+                return new {
+                    User = CurrentRequest.CurrentUser.GetTrainer(dbContext),
+                    IsTrainer = true,
+                    IsAdmin = false
+                };
+            }
+        }
 
         // POST api/account/trainer/
         [Authorize(AuthenticationSchemes = "Bearer")]
